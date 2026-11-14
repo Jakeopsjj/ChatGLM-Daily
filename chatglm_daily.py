@@ -478,7 +478,11 @@ class ChatGLMClient:
         return self.request("POST", path, body=body or {}, what=what)
 
     def task_center(self):
-        return envelope(self.get(PATH_TASK_CENTER, "任务中心查询"), "任务中心查询") or {}
+        try:
+            return envelope(self.get(PATH_TASK_CENTER, "任务中心查询"), "任务中心查询") or {}
+        except Exception as exc:
+            log("任务中心不可用（%s），跳过任务部分" % str(exc)[:60])
+            return {}
 
     def query_balance(self):
         member = envelope(
